@@ -1,6 +1,9 @@
-import { serial, text, timestamp, integer, pgTable, uuid, boolean } from "drizzle-orm/pg-core";
+import { serial, text, timestamp, integer, pgTable, uuid, boolean, pgEnum} from "drizzle-orm/pg-core";
 import { createId } from '@paralleldrive/cuid2';
 import { relations } from "drizzle-orm";
+
+// rp = password reset, ec = email confirmation
+export const userTokensOps = pgEnum("op", ["rp", "ec"])
 
 export const user = pgTable("user", {
     uid: uuid('uuid').defaultRandom().primaryKey(),
@@ -17,8 +20,11 @@ export const userTokens = pgTable("user_tokens", {
     id: serial("id").primaryKey(),
     token: text("token").notNull().unique(),
     userId: uuid("user_id").notNull().references(() => user.uid),
+    expiresAt: timestamp("expires_at").notNull().$defaultFn(() => new Date(Date.now() + 24 * 60 * 60 * 1000)),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
+    active: boolean("active").notNull().default(true),
+    op: userTokensOps('op').notNull(),
 });
 
 export const post = pgTable("post", {
