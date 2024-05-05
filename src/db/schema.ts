@@ -1,6 +1,5 @@
 import { serial, text, timestamp, integer, pgTable, uuid, boolean, pgEnum} from "drizzle-orm/pg-core";
 import { createId } from '@paralleldrive/cuid2';
-import { relations } from "drizzle-orm";
 
 // rp = password reset, ec = email confirmation
 export const userTokensOps = pgEnum("op", ["rp", "ec"])
@@ -36,6 +35,14 @@ export const post = pgTable("post", {
 	updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
+export const likes = pgTable("likes", {
+    uid: uuid('uuid').defaultRandom().primaryKey(), 
+    postId: uuid("post_id").notNull().references(() => post.uid),
+    userId: uuid("user_id").notNull().references(() => user.uid),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at").notNull().defaultNow(),
+})
+
 export const comments = pgTable("comments", {
     id: text('id')
         .$defaultFn(() => createId())
@@ -47,17 +54,3 @@ export const comments = pgTable("comments", {
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
 })
-
-export const usersRelations = relations(post, ({ many }) => ({
-	posts: many(post),
-}));
-
-export const commentsRelations = relations(comments, ({ one }) => ({
-	post: one(post, { fields: [comments.postId], references: [post.uid] }),
-	user: one(user, { fields: [comments.id], references: [user.uid] }),
-}));
-
-export const postRelations = relations(post, ({ one, many }) => ({
-    user: one(user, { fields: [post.author], references: [user.uid] }),
-    comments: many(comments),
-}));

@@ -9,15 +9,17 @@ import jwt, {Secret} from 'jsonwebtoken'
 import { db } from '../../db'
 import { user, userTokens } from '../../db/schema';
 import { sendEmail } from '../../utils';
-
-type ErrorMessage = {
-    [key: string]: string;
-}
+import { ErrorMessage } from '../../types';
 
 const JWT_SECRET:Secret = process.env.JWT_SECRET || ''
 
+
 export class AuthController {
     static async register(req: Request, res: Response): Promise<Response> {        
+
+        const host = req.get('host');
+        const protocol = req.protocol;
+        const baseUrl = `${protocol}://${host}`;
 
         const schema = z.object({
             name: z.string().min(2),
@@ -83,7 +85,7 @@ export class AuthController {
             
             const emailVerificationTokenData = verificationData?.[0]?.token
 
-            sendEmail(email, 'Email Verification', `Click on the link to verify your email: http://localhost:3000/api/v1/auth/verify-email/${emailVerificationTokenData}`)
+            sendEmail(email, 'Email Verification', `Click on the link to verify your email: ${baseUrl}/api/v1/auth/verify-email/${emailVerificationTokenData}`)
 
             return res.status(200).json({
                 message: 'User registered successfully',
@@ -220,6 +222,10 @@ export class AuthController {
 
     }
     static async forgotPassword(req: Request, res: Response) {
+        const host = req.get('host');
+        const protocol = req.protocol;
+        const baseUrl = `${protocol}://${host}`;
+        
         const schema = z.object({
             email: z.string().email(),
         })
@@ -258,7 +264,7 @@ export class AuthController {
             
             const passwordResetTokenData = passwordResetTokenQuery?.[0]?.token
 
-            sendEmail(email, 'Password Reset', `Click on the link to reset your password: http://localhost:3000/api/v1/auth/reset-password/${passwordResetTokenData}`)
+            sendEmail(email, 'Password Reset', `Click on the link to reset your password: ${baseUrl}/api/v1/auth/reset-password/${passwordResetTokenData}`)
 
             return res.status(200).json({
                 message: 'If the email exists, a password reset link will be sent to your email',

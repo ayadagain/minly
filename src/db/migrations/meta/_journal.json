@@ -50,6 +50,13 @@
       "when": 1715562873852,
       "tag": "0006_dark_colossus",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1715645807452,
+      "tag": "0007_soft_bill_hollister",
+      "breakpoints": true
     }
   ]
 }
