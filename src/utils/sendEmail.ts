@@ -1,7 +1,4 @@
-import exp from 'constants'
-import {Resend} from 'resend'
-
-const resend = new Resend(process.env.RESEND_API_KEY)
+import { resend } from '../lib'
 
 const sendEmail = async (to: string, subject: string, text: string) => {
     try {
@@ -13,7 +10,7 @@ const sendEmail = async (to: string, subject: string, text: string) => {
         })
         console.log(response)
     } catch (error) {
-        console.log(error)
+        console.error(error)
     }
 }
 

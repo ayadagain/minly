@@ -6,8 +6,6 @@ import path from "path";
 
 const dirname = path.resolve(path.dirname(''));
 
-console.log(dirname);
-
 const sql = neon(process.env.DATABASE_URL ? process.env.DATABASE_URL : "");
 
 const db = drizzle(sql);

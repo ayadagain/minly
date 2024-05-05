@@ -232,7 +232,6 @@ export class AuthController {
                 .where(eq(user.email, email))
 
             if (!userData || userData.length === 0) {
-                console.log('This email does not exist')
                 return res.status(400).json({
                     message: "If the email exists, a password reset link will be sent to your email",
                 })

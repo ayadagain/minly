@@ -29,7 +29,8 @@ export const userTokens = pgTable("user_tokens", {
 
 export const post = pgTable("post", {
     uid: uuid('uuid').defaultRandom().primaryKey(),
-	caption: text("content").notNull(),
+	caption: text("content"),
+    image: text("image").notNull(),
     author: uuid("author").notNull().references(() => user.uid),
 	createdAt: timestamp("created_at").notNull().defaultNow(),
 	updatedAt: timestamp("updated_at").notNull().defaultNow(),
